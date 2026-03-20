@@ -1,0 +1,87 @@
+{
+  "project": {
+    "name": "Treasury Monitor",
+    "tagline": "Monitoring · Ethereum & Polygon",
+    "accent": "#00e5a0"
+  },
+
+  "refresh_interval_seconds": 60,
+
+  "groups": [
+    {
+      "id": "wallets",
+      "label": "Wallets",
+      "icon": "◈",
+      "entities": [
+        {
+          "name": "Main Treasury",
+          "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+          "network": "ethereum",
+          "assets": [
+            {
+              "type": "native",
+              "thresholds": { "warn": 1.0, "critical": 0.2 }
+            },
+            {
+              "type": "erc20",
+              "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              "symbol": "USDC",
+              "decimals": 6,
+              "thresholds": { "warn": 5000, "critical": 1000 }
+            },
+            {
+              "type": "erc20",
+              "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+              "symbol": "USDT",
+              "decimals": 6,
+              "thresholds": { "warn": 2000, "critical": 500 }
+            }
+          ]
+        },
+        {
+          "name": "Ops Wallet",
+          "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+          "network": "polygon",
+          "assets": [
+            {
+              "type": "native",
+              "thresholds": { "warn": 50, "critical": 10 }
+            },
+            {
+              "type": "erc20",
+              "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+              "symbol": "USDC",
+              "decimals": 6,
+              "thresholds": { "warn": 1000, "critical": 200 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "archemists",
+      "label": "Archemists",
+      "icon": "⬡",
+      "entities": [
+        {
+          "name": "Archemist Alpha",
+          "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+          "network": "ethereum",
+          "assets": [
+            {
+              "type": "native",
+              "thresholds": { "warn": 0.5, "critical": 0.1 }
+            },
+            {
+              "type": "erc20",
+              "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+              "symbol": "DAI",
+              "decimals": 18,
+              "thresholds": { "warn": 500, "critical": 100 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
