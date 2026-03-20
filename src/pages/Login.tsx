@@ -4,10 +4,10 @@ import { signIn } from '../lib/supabase'
 import { cn } from '../lib/cn'
 
 export function Login() {
-  const [email,    setEmail]    = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -26,29 +26,36 @@ export function Login() {
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center relative">
       {/* Grid background */}
-      <div className="absolute inset-0 pointer-events-none"
-           style={{
-             backgroundImage: `
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
                linear-gradient(rgba(0,229,160,0.018) 1px, transparent 1px),
                linear-gradient(90deg, rgba(0,229,160,0.018) 1px, transparent 1px)`,
-             backgroundSize: '40px 40px',
-           }} />
+          backgroundSize: '40px 40px',
+        }}
+      />
 
       <div className="relative z-10 w-full max-w-sm mx-4">
-
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-8
-                        font-mono uppercase tracking-[0.2em] text-[color:var(--accent)]">
-          <div className="w-8 h-8 border-[1.5px] border-[color:var(--accent)]
-                          rounded-md flex items-center justify-center text-base">
+        <div
+          className="flex items-center justify-center gap-2.5 mb-8
+                        font-mono uppercase tracking-[0.2em] text-[color:var(--accent)]"
+        >
+          <div
+            className="w-8 h-8 border-[1.5px] border-[color:var(--accent)]
+                          rounded-md flex items-center justify-center text-base"
+          >
             ◈
           </div>
           <span className="text-sm">Treasury Monitor</span>
         </div>
 
         {/* Card */}
-        <div className="accent-top relative bg-surface border border-border rounded-xl
-                        px-8 py-8 overflow-hidden">
+        <div
+          className="accent-top relative bg-surface border border-border rounded-xl
+                        px-8 py-8 overflow-hidden"
+        >
           <h1 className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted mb-6">
             Acceso
           </h1>
@@ -61,7 +68,7 @@ export function Login() {
               <input
                 type="email"
                 value={email}
-                onChange={event => setEmail(event.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
@@ -81,7 +88,7 @@ export function Login() {
               <input
                 type="password"
                 value={password}
-                onChange={event => setPassword(event.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
@@ -95,8 +102,10 @@ export function Login() {
             </div>
 
             {error && (
-              <p className="font-mono text-[9px] text-crimson bg-crimson/5
-                            border border-crimson/20 rounded px-3 py-2">
+              <p
+                className="font-mono text-[9px] text-crimson bg-crimson/5
+                            border border-crimson/20 rounded px-3 py-2"
+              >
                 ⚠ {error}
               </p>
             )}
@@ -113,10 +122,7 @@ export function Login() {
                 'hover:opacity-90',
               )}
             >
-              {loading
-                ? <Loader2 size={12} className="animate-spin" />
-                : <LogIn size={12} />
-              }
+              {loading ? <Loader2 size={12} className="animate-spin" /> : <LogIn size={12} />}
               {loading ? 'Entrando…' : 'Entrar'}
             </button>
           </form>

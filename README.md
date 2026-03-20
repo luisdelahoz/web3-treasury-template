@@ -4,11 +4,11 @@ On-chain treasury dashboard built with React + Vite + Supabase.
 
 ## Architecture overview
 
-| Layer | Purpose |
-|---|---|
+| Layer         | Purpose                                    |
+| ------------- | ------------------------------------------ |
 | `config.json` | Branding, accent color, API key references |
-| Supabase (DB) | Groups, entities, assets, thresholds |
-| `.env.local` | Secret keys — never commit |
+| Supabase (DB) | Groups, entities, assets, thresholds       |
+| `.env.local`  | Secret keys — never commit                 |
 
 ---
 
@@ -28,9 +28,9 @@ GitHub → `treasury-template` → **Use this template** → enter your new repo
 
 **Settings** → **API**:
 
-| Variable | Value |
-|---|---|
-| `VITE_SUPABASE_URL` | Project URL |
+| Variable                 | Value             |
+| ------------------------ | ----------------- |
+| `VITE_SUPABASE_URL`      | Project URL       |
 | `VITE_SUPABASE_ANON_KEY` | anon / public key |
 
 ### 4. Set up the local environment
@@ -68,21 +68,21 @@ Changes are reflected on the next refresh (max 60 s) or immediately when pressin
 
 ## Environment variables
 
-| Variable | Where to find it |
-|---|---|
-| `VITE_ETHERSCAN_KEY` | [etherscan.io/apis](https://etherscan.io/apis) |
-| `VITE_POLYGONSCAN_KEY` | [polygonscan.com/apis](https://polygonscan.com/apis) |
-| `VITE_SUPABASE_URL` | Supabase → Settings → API → Project URL |
-| `VITE_SUPABASE_ANON_KEY` | Supabase → Settings → API → anon / public |
+| Variable                 | Where to find it                                     |
+| ------------------------ | ---------------------------------------------------- |
+| `VITE_ETHERSCAN_KEY`     | [etherscan.io/apis](https://etherscan.io/apis)       |
+| `VITE_POLYGONSCAN_KEY`   | [polygonscan.com/apis](https://polygonscan.com/apis) |
+| `VITE_SUPABASE_URL`      | Supabase → Settings → API → Project URL              |
+| `VITE_SUPABASE_ANON_KEY` | Supabase → Settings → API → anon / public            |
 
 ---
 
 ## Deployment
 
-| Setting | Value |
-|---|---|
-| Build command | `npm run build` |
-| Publish directory | `dist` |
+| Setting           | Value           |
+| ----------------- | --------------- |
+| Build command     | `npm run build` |
+| Publish directory | `dist`          |
 
 Add all 4 environment variables in your Netlify / Vercel dashboard.
 

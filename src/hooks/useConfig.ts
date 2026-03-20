@@ -3,10 +3,10 @@ import { fetchGroups } from '../lib/supabase'
 import type { Group } from '../types'
 
 interface UseConfigResult {
-  groups:  Group[]
+  groups: Group[]
   loading: boolean
-  error:   string | null
-  reload:  () => Promise<void>
+  error: string | null
+  reload: () => Promise<void>
 }
 
 /**
@@ -14,9 +14,9 @@ interface UseConfigResult {
  * Returns the same shape as the static config.json `groups` array.
  */
 export function useConfig(): UseConfigResult {
-  const [groups,  setGroups]  = useState<Group[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
   const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -32,7 +32,9 @@ export function useConfig(): UseConfigResult {
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   return { groups, loading, error, reload: load }
 }

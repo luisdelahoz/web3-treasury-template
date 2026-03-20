@@ -1,68 +1,68 @@
 // ── Primitives ────────────────────────────────────────────────────────────────
 
-export type AlertLevel    = 'critical' | 'warn' | 'ok'
-export type EntityStatus  = 'idle' | 'loading' | 'ok' | 'error'
-export type AssetType     = 'native' | 'erc20'
-export type NetworkKey    = 'ethereum' | 'polygon'
-export type NetworkCls    = 'eth' | 'poly'
+export type AlertLevel = 'critical' | 'warn' | 'ok'
+export type EntityStatus = 'idle' | 'loading' | 'ok' | 'error'
+export type AssetType = 'native' | 'erc20'
+export type NetworkKey = 'ethereum' | 'polygon'
+export type NetworkCls = 'eth' | 'poly'
 
 // ── Network ───────────────────────────────────────────────────────────────────
 
 export interface NetworkConfig {
-  icon:      string
-  label:     string
-  cls:       NetworkCls
+  icon: string
+  label: string
+  cls: NetworkCls
   nativeSym: string
-  geckoId:   string
-  explorer:  string
-  envKey:    string
+  geckoId: string
+  explorer: string
+  envKey: string
 }
 
 // ── Domain models ─────────────────────────────────────────────────────────────
 
 export interface Threshold {
-  warn:     number
+  warn: number
   critical: number
 }
 
 export interface Asset {
-  id:         string
-  type:       AssetType
-  symbol:     string
-  decimals:   number
-  address?:   string
+  id: string
+  type: AssetType
+  symbol: string
+  decimals: number
+  address?: string
   thresholds: Threshold | null
 }
 
 export interface Entity {
-  id:      string
-  name:    string
+  id: string
+  name: string
   address: string
   network: NetworkKey
-  assets:  Asset[]
+  assets: Asset[]
 }
 
 export interface Group {
-  id:       string
-  label:    string
-  icon:     string
+  id: string
+  label: string
+  icon: string
   entities: Entity[]
 }
 
 // ── Balance state ─────────────────────────────────────────────────────────────
 
 export interface AssetRow {
-  symbol:     string
-  name:       string
-  bal:        number
-  usd:        number
+  symbol: string
+  name: string
+  bal: number
+  usd: number
   alertLevel: AlertLevel
 }
 
 export interface EntityState {
-  status:     EntityStatus
-  rows:       AssetRow[]
-  error:      string | null
+  status: EntityStatus
+  rows: AssetRow[]
+  error: string | null
   updatedAt?: Date
 }
 

@@ -31,36 +31,36 @@ export function onAuthChange(callback: (user: User | null) => void) {
 // ── Raw DB row types ──────────────────────────────────────────────────────────
 
 interface DbGroup {
-  id:         string
-  label:      string
-  icon:       string
+  id: string
+  label: string
+  icon: string
   sort_order: number
 }
 
 interface DbEntity {
-  id:         string
-  name:       string
-  address:    string
-  network:    NetworkKey
-  group_id:   string
-  enabled:    boolean
+  id: string
+  name: string
+  address: string
+  network: NetworkKey
+  group_id: string
+  enabled: boolean
   sort_order: number
 }
 
 interface DbAsset {
-  id:         string
-  entity_id:  string
-  type:       AssetType
-  symbol:     string
-  decimals:   number | null
-  address:    string | null
+  id: string
+  entity_id: string
+  type: AssetType
+  symbol: string
+  decimals: number | null
+  address: string | null
   sort_order: number
 }
 
 interface DbThreshold {
-  id:       string
+  id: string
   asset_id: string
-  warn:     number
+  warn: number
   critical: number
 }
 
@@ -101,52 +101,48 @@ export async function fetchGroups(): Promise<Group[]> {
   if (aErr) throw aErr
 
   // 4. Thresholds
-  const { data: thresholds, error: tErr } = await supabase
-    .from('thresholds')
-    .select('*')
+  const { data: thresholds, error: tErr } = await supabase.from('thresholds').select('*')
   if (tErr) throw tErr
 
   // ── Assemble ──────────────────────────────────────────────────────────────
 
   const thresholdsByAsset = Object.fromEntries(
-    (thresholds as DbThreshold[]).map(
-      threshold => [
-        threshold.asset_id,
-        { warn: threshold.warn, critical: threshold.critical } satisfies Threshold,
-      ]
-    )
+    (thresholds as DbThreshold[]).map((threshold) => [
+      threshold.asset_id,
+      { warn: threshold.warn, critical: threshold.critical } satisfies Threshold,
+    ]),
   )
 
-  type AssetWithMeta  = Asset  & { _entityId: string }
+  type AssetWithMeta = Asset & { _entityId: string }
   type EntityWithMeta = Entity & { _groupId: string }
 
-  const assetsWithMeta: AssetWithMeta[] = (assets as DbAsset[]).map(asset => ({
-    id:         asset.id,
-    type:       asset.type,
-    symbol:     asset.symbol,
-    address:    asset.address ?? undefined,
-    decimals:   asset.decimals ?? 18,
+  const assetsWithMeta: AssetWithMeta[] = (assets as DbAsset[]).map((asset) => ({
+    id: asset.id,
+    type: asset.type,
+    symbol: asset.symbol,
+    address: asset.address ?? undefined,
+    decimals: asset.decimals ?? 18,
     thresholds: thresholdsByAsset[asset.id] ?? null,
-    _entityId:  asset.entity_id,
+    _entityId: asset.entity_id,
   }))
 
-  const entitiesWithMeta: EntityWithMeta[] = (entities as DbEntity[]).map(entity => ({
-    id:       entity.id,
-    name:     entity.name,
-    address:  entity.address,
-    network:  entity.network,
-    assets:   assetsWithMeta
-                .filter(asset => asset._entityId === entity.id)
-                .map(({ _entityId: _dropped, ...rest }) => rest),
+  const entitiesWithMeta: EntityWithMeta[] = (entities as DbEntity[]).map((entity) => ({
+    id: entity.id,
+    name: entity.name,
+    address: entity.address,
+    network: entity.network,
+    assets: assetsWithMeta
+      .filter((asset) => asset._entityId === entity.id)
+      .map(({ _entityId: _dropped, ...rest }) => rest),
     _groupId: entity.group_id,
   }))
 
-  return (groups as DbGroup[]).map(group => ({
-    id:       group.id,
-    label:    group.label,
-    icon:     group.icon,
+  return (groups as DbGroup[]).map((group) => ({
+    id: group.id,
+    label: group.label,
+    icon: group.icon,
     entities: entitiesWithMeta
-                .filter(entity => entity._groupId === group.id)
-                .map(({ _groupId: _dropped, ...rest }) => rest),
+      .filter((entity) => entity._groupId === group.id)
+      .map(({ _groupId: _dropped, ...rest }) => rest),
   }))
 }

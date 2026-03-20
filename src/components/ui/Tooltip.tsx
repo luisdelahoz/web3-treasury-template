@@ -7,16 +7,12 @@ interface TooltipProviderProps {
 
 interface TooltipProps {
   children: React.ReactNode
-  content:  React.ReactNode
-  side?:    'top' | 'right' | 'bottom' | 'left'
+  content: React.ReactNode
+  side?: 'top' | 'right' | 'bottom' | 'left'
 }
 
 export function TooltipProvider({ children }: TooltipProviderProps) {
-  return (
-    <TooltipPrimitive.Provider delayDuration={200}>
-      {children}
-    </TooltipPrimitive.Provider>
-  )
+  return <TooltipPrimitive.Provider delayDuration={200}>{children}</TooltipPrimitive.Provider>
 }
 
 export function Tooltip({ children, content, side = 'top' }: TooltipProps) {

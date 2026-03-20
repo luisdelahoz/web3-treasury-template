@@ -21,8 +21,8 @@ document.documentElement.style.setProperty('--accent', accentColor)
 document.title = project.name
 
 export default function App() {
-  const [user,         setUser]         = useState<User | null | undefined>(undefined) // undefined = checking auth
-  const [lastRefresh,  setLastRefresh]  = useState<Date | null>(null)
+  const [user, setUser] = useState<User | null | undefined>(undefined) // undefined = checking auth
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -32,7 +32,9 @@ export default function App() {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null)
     })
-    const { data: { subscription } } = onAuthChange(setUser)
+    const {
+      data: { subscription },
+    } = onAuthChange(setUser)
     return () => subscription.unsubscribe()
   }, [])
 
@@ -53,18 +55,25 @@ export default function App() {
     setIsRefreshing(false)
   }, [loadAll, refetchPrices])
 
-  // Refresh balances once config finishes loading
+  // Always keep a ref pointing to the latest refresh callback so effects
+  // never hold a stale closure without needing refresh in their dep arrays.
+  const refreshRef = useRef(refresh)
   useEffect(() => {
-    if (!configLoading && groups.length > 0) refresh()
-  }, [configLoading]) // eslint-disable-line react-hooks/exhaustive-deps
+    refreshRef.current = refresh
+  })
 
-  // Auto-refresh on interval
+  // Load balances once config is ready
   useEffect(() => {
-    timerRef.current = setInterval(refresh, refreshIntervalSeconds * 1000)
+    if (!configLoading && groups.length > 0) void refreshRef.current()
+  }, [configLoading, groups.length])
+
+  // Auto-refresh on interval (refreshIntervalSeconds is a module-level constant)
+  useEffect(() => {
+    timerRef.current = setInterval(() => void refreshRef.current(), refreshIntervalSeconds * 1000)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [refresh, refreshIntervalSeconds])
+  }, [])
 
   // ── Auth gate ─────────────────────────────────────────────────────────────
 
@@ -83,13 +92,17 @@ export default function App() {
   if (configError) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center p-8">
-        <div className="max-w-md bg-surface border border-crimson/30 rounded-xl p-6
-                        font-mono text-[11px] text-crimson">
+        <div
+          className="max-w-md bg-surface border border-crimson/30 rounded-xl p-6
+                        font-mono text-[11px] text-crimson"
+        >
           <p className="font-bold text-sm mb-2">⚠ Error cargando config desde Supabase</p>
           <p className="text-crimson/70 mb-4">{configError}</p>
-          <button onClick={reloadConfig}
-                  className="px-3 py-1.5 border border-crimson/30 rounded text-[9px]
-                             uppercase tracking-wider hover:border-crimson transition-colors">
+          <button
+            onClick={reloadConfig}
+            className="px-3 py-1.5 border border-crimson/30 rounded text-[9px]
+                             uppercase tracking-wider hover:border-crimson transition-colors"
+          >
             Reintentar
           </button>
         </div>
@@ -102,15 +115,20 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="relative z-10">
-
         {/* Header */}
-        <header className="sticky top-0 z-50 flex items-center justify-between
+        <header
+          className="sticky top-0 z-50 flex items-center justify-between
                            px-8 py-[18px] border-b border-border
-                           bg-bg/85 backdrop-blur-md">
-          <div className="flex items-center gap-2.5 font-mono uppercase tracking-[0.2em]
-                          text-[color:var(--accent)]">
-            <div className="w-[30px] h-[30px] border-[1.5px] border-[color:var(--accent)]
-                            rounded-md flex items-center justify-center text-sm">
+                           bg-bg/85 backdrop-blur-md"
+        >
+          <div
+            className="flex items-center gap-2.5 font-mono uppercase tracking-[0.2em]
+                          text-[color:var(--accent)]"
+          >
+            <div
+              className="w-[30px] h-[30px] border-[1.5px] border-[color:var(--accent)]
+                            rounded-md flex items-center justify-center text-sm"
+            >
               ◈
             </div>
             <div>
@@ -124,16 +142,18 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[9px] text-muted hidden sm:block">
-              {user.email}
-            </span>
+            <span className="font-mono text-[9px] text-muted hidden sm:block">{user.email}</span>
 
             <div className="w-px h-4 bg-border" />
 
-            <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase
-                            tracking-[0.2em] text-[color:var(--accent)]">
-              <div className="w-1.5 h-1.5 rounded-full bg-[color:var(--accent)]
-                              animate-[pulse_2s_infinite]" />
+            <div
+              className="flex items-center gap-1.5 font-mono text-[9px] uppercase
+                            tracking-[0.2em] text-[color:var(--accent)]"
+            >
+              <div
+                className="w-1.5 h-1.5 rounded-full bg-[color:var(--accent)]
+                              animate-[pulse_2s_infinite]"
+              />
               Live
             </div>
 
@@ -175,25 +195,23 @@ export default function App() {
 
         {/* Main */}
         <main className="px-8 py-7 max-w-[1440px] mx-auto">
-          {configLoading
-            ? (
-              <div className="flex items-center justify-center py-24 gap-3
-                              font-mono text-[10px] text-muted">
-                <Loader2 size={14} className="animate-spin" />
-                Cargando configuración…
-              </div>
-            )
-            : (
-              <>
-                <TotalsBar groups={groups} getEntity={getEntity} lastRefresh={lastRefresh} />
-                {groups.map(group => (
-                  <Section key={group.id} group={group} getEntity={getEntity} />
-                ))}
-              </>
-            )
-          }
+          {configLoading ? (
+            <div
+              className="flex items-center justify-center py-24 gap-3
+                              font-mono text-[10px] text-muted"
+            >
+              <Loader2 size={14} className="animate-spin" />
+              Cargando configuración…
+            </div>
+          ) : (
+            <>
+              <TotalsBar groups={groups} getEntity={getEntity} lastRefresh={lastRefresh} />
+              {groups.map((group) => (
+                <Section key={group.id} group={group} getEntity={getEntity} />
+              ))}
+            </>
+          )}
         </main>
-
       </div>
     </TooltipProvider>
   )

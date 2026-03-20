@@ -10,7 +10,7 @@ export function getAlertLevel(
 ): AlertLevel {
   if (!thresholds || balance === null || balance === undefined) return 'ok'
   if (thresholds.critical !== undefined && balance <= thresholds.critical) return 'critical'
-  if (thresholds.warn     !== undefined && balance <= thresholds.warn)     return 'warn'
+  if (thresholds.warn !== undefined && balance <= thresholds.warn) return 'warn'
   return 'ok'
 }
 
@@ -19,7 +19,7 @@ export function getAlertLevel(
  */
 export function getCardAlertLevel(rows: AssetRow[]): AlertLevel {
   if (!rows?.length) return 'ok'
-  if (rows.some(r => r.alertLevel === 'critical')) return 'critical'
-  if (rows.some(r => r.alertLevel === 'warn'))     return 'warn'
+  if (rows.some((r) => r.alertLevel === 'critical')) return 'critical'
+  if (rows.some((r) => r.alertLevel === 'warn')) return 'warn'
   return 'ok'
 }

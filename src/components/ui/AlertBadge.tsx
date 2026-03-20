@@ -4,27 +4,27 @@ import { Tooltip } from './Tooltip'
 import type { AlertLevel, AssetRow } from '../../types'
 
 interface LevelConfig {
-  Icon:      React.ComponentType<{ size?: number; strokeWidth?: number }>
-  label:     string
+  Icon: React.ComponentType<{ size?: number; strokeWidth?: number }>
+  label: string
   className: string
 }
 
 const LEVEL_CONFIG: Record<Exclude<AlertLevel, 'ok'>, LevelConfig> = {
   warn: {
-    Icon:      AlertTriangle,
-    label:     'Warning',
+    Icon: AlertTriangle,
+    label: 'Warning',
     className: 'bg-amber/10 border-amber/30 text-amber',
   },
   critical: {
-    Icon:      AlertOctagon,
-    label:     'Critical',
+    Icon: AlertOctagon,
+    label: 'Critical',
     className: 'bg-crimson/10 border-crimson/30 text-crimson',
   },
 }
 
 interface AlertBadgeProps {
   level: AlertLevel
-  rows:  AssetRow[]
+  rows: AssetRow[]
 }
 
 /**
@@ -36,8 +36,8 @@ export function AlertBadge({ level, rows }: AlertBadgeProps) {
 
   const config = LEVEL_CONFIG[level]
   const alertedAssets = rows
-    .filter(row => row.alertLevel === 'warn' || row.alertLevel === 'critical')
-    .map(row => `${row.symbol} (${row.bal.toFixed(4)})`)
+    .filter((row) => row.alertLevel === 'warn' || row.alertLevel === 'critical')
+    .map((row) => `${row.symbol} (${row.bal.toFixed(4)})`)
     .join(', ')
 
   return (

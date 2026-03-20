@@ -3,14 +3,14 @@ import { formatUSD } from '../lib/formatters'
 import type { Group, EntityState } from '../types'
 
 interface SectionProps {
-  group:     Group
+  group: Group
   getEntity: (entity: Group['entities'][number], groupId: string) => EntityState
 }
 
 export function Section({ group, getEntity }: SectionProps) {
   const groupTotal = group.entities.reduce((sum, entity) => {
     const state = getEntity(entity, group.id)
-    return sum + (state.rows.reduce((rowSum, row) => rowSum + (row.usd || 0), 0))
+    return sum + state.rows.reduce((rowSum, row) => rowSum + (row.usd || 0), 0)
   }, 0)
 
   return (
@@ -30,22 +30,23 @@ export function Section({ group, getEntity }: SectionProps) {
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3.5">
-        {group.entities.length === 0
-          ? (
-            <div className="col-span-full text-center py-12 font-mono text-[10px] text-muted
-                            border border-dashed border-border rounded-lg">
-              Sin entidades en este grupo.
-            </div>
-          )
-          : group.entities.map((entity, index) => (
-              <Card
-                key={`${entity.address}-${entity.network}`}
-                entity={entity}
-                state={getEntity(entity, group.id)}
-                style={{ animationDelay: `${index * 55}ms` }}
-              />
-            ))
-        }
+        {group.entities.length === 0 ? (
+          <div
+            className="col-span-full text-center py-12 font-mono text-[10px] text-muted
+                            border border-dashed border-border rounded-lg"
+          >
+            Sin entidades en este grupo.
+          </div>
+        ) : (
+          group.entities.map((entity, index) => (
+            <Card
+              key={`${entity.address}-${entity.network}`}
+              entity={entity}
+              state={getEntity(entity, group.id)}
+              style={{ animationDelay: `${index * 55}ms` }}
+            />
+          ))
+        )}
       </div>
     </section>
   )
