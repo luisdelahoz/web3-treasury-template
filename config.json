@@ -58,30 +58,5 @@
         }
       ]
     },
-    {
-      "id": "archemists",
-      "label": "Archemists",
-      "icon": "⬡",
-      "entities": [
-        {
-          "name": "Archemist Alpha",
-          "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-          "network": "ethereum",
-          "assets": [
-            {
-              "type": "native",
-              "thresholds": { "warn": 0.5, "critical": 0.1 }
-            },
-            {
-              "type": "erc20",
-              "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-              "symbol": "DAI",
-              "decimals": 18,
-              "thresholds": { "warn": 500, "critical": 100 }
-            }
-          ]
-        }
-      ]
-    }
   ]
 }
