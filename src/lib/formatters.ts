@@ -1,21 +1,21 @@
-export function formatBalance(n: number | null | undefined): string {
-  if (n === null || n === undefined || isNaN(n)) return '—'
-  if (n === 0) return '0'
-  if (n < 0.0001) return '< 0.0001'
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M'
-  if (n >= 1e3) return (n / 1e3).toFixed(2) + 'K'
-  return n.toFixed(4)
+export function formatBalance(value: number | null | undefined): string {
+  if (value === null || value === undefined || isNaN(value)) return '—'
+  if (value === 0) return '0'
+  if (value < 0.0001) return '< 0.0001'
+  if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M'
+  if (value >= 1e3) return (value / 1e3).toFixed(2) + 'K'
+  return value.toFixed(4)
 }
 
-export function formatUSD(n: number | null | undefined): string {
-  if (!n || n === 0) return ''
-  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M'
-  if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K'
-  return '$' + n.toFixed(2)
+export function formatUSD(value: number | null | undefined): string {
+  if (!value || value === 0) return ''
+  if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M'
+  if (value >= 1e3) return '$' + (value / 1e3).toFixed(1) + 'K'
+  return '$' + value.toFixed(2)
 }
 
-export function shortenAddress(addr: string): string {
-  return addr.slice(0, 6) + '…' + addr.slice(-4)
+export function shortenAddress(address: string): string {
+  return address.slice(0, 6) + '…' + address.slice(-4)
 }
 
 export function formatTime(date: Date): string {

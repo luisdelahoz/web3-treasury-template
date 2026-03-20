@@ -37,7 +37,7 @@ export function AlertBadge({ level, rows }: AlertBadgeProps) {
   const config = LEVEL_CONFIG[level]
   const alertedAssets = rows
     .filter((row) => row.alertLevel === 'warn' || row.alertLevel === 'critical')
-    .map((row) => `${row.symbol} (${row.bal.toFixed(4)})`)
+    .map((row) => `${row.symbol} (${row.balance.toFixed(4)})`)
     .join(', ')
 
   return (

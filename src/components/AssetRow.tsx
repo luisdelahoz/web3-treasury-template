@@ -23,12 +23,12 @@ const ALERT_SYMBOL_CLASS: Record<AlertLevel, string> = {
 interface AssetRowProps {
   symbol: string
   name: string
-  bal: number
-  usd: number
+  balance: number
+  usdValue: number
   alertLevel?: AlertLevel
 }
 
-export function AssetRow({ symbol, name, bal, usd, alertLevel = 'ok' }: AssetRowProps) {
+export function AssetRow({ symbol, name, balance, usdValue, alertLevel = 'ok' }: AssetRowProps) {
   return (
     <div
       className={cn(
@@ -47,10 +47,10 @@ export function AssetRow({ symbol, name, bal, usd, alertLevel = 'ok' }: AssetRow
           ALERT_BALANCE_CLASS[alertLevel],
         )}
       >
-        {formatBalance(bal)}
+        {formatBalance(balance)}
       </span>
       <span className="font-mono text-[9px] text-muted min-w-[68px] text-right whitespace-nowrap">
-        {formatUSD(usd)}
+        {formatUSD(usdValue)}
       </span>
     </div>
   )

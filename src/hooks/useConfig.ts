@@ -24,9 +24,9 @@ export function useConfig(): UseConfigResult {
     try {
       const data = await fetchGroups()
       setGroups(data)
-    } catch (err) {
-      console.error('useConfig error:', err)
-      setError(err instanceof Error ? err.message : String(err))
+    } catch (error) {
+      console.error('useConfig error:', error)
+      setError(error instanceof Error ? error.message : String(error))
     } finally {
       setLoading(false)
     }

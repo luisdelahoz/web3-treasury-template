@@ -11,8 +11,8 @@ export type NetworkCls = 'eth' | 'poly'
 export interface NetworkConfig {
   icon: string
   label: string
-  cls: NetworkCls
-  nativeSym: string
+  colorVariant: NetworkCls
+  nativeSymbol: string
   geckoId: string
   explorer: string
   envKey: string
@@ -54,8 +54,8 @@ export interface Group {
 export interface AssetRow {
   symbol: string
   name: string
-  bal: number
-  usd: number
+  balance: number
+  usdValue: number
   alertLevel: AlertLevel
 }
 

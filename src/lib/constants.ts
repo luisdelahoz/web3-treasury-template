@@ -4,8 +4,8 @@ export const NETWORKS: Record<NetworkKey, NetworkConfig> = {
   ethereum: {
     icon: '◆',
     label: 'Ethereum',
-    cls: 'eth',
-    nativeSym: 'ETH',
+    colorVariant: 'eth',
+    nativeSymbol: 'ETH',
     geckoId: 'ethereum',
     explorer: 'https://api.etherscan.io/api',
     envKey: 'VITE_ETHERSCAN_KEY',
@@ -13,8 +13,8 @@ export const NETWORKS: Record<NetworkKey, NetworkConfig> = {
   polygon: {
     icon: '◆',
     label: 'Polygon',
-    cls: 'poly',
-    nativeSym: 'MATIC',
+    colorVariant: 'poly',
+    nativeSymbol: 'MATIC',
     geckoId: 'matic-network',
     explorer: 'https://api.polygonscan.com/api',
     envKey: 'VITE_POLYGONSCAN_KEY',

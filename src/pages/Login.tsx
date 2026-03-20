@@ -16,8 +16,8 @@ export function Login() {
     try {
       await signIn(email, password)
       // onAuthChange in App.tsx will pick up the new session automatically
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error))
     } finally {
       setLoading(false)
     }

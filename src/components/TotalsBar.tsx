@@ -4,11 +4,11 @@ import type { Group, EntityState } from '../types'
 interface TotalCardProps {
   label: string
   value: string
-  sub?: string
+  subtitle?: string
   large?: boolean
 }
 
-function TotalCard({ label, value, sub, large }: TotalCardProps) {
+function TotalCard({ label, value, subtitle, large }: TotalCardProps) {
   return (
     <div className="accent-top relative bg-surface border border-border rounded-lg px-5 py-4 overflow-hidden">
       <div className="font-mono text-[8px] uppercase tracking-[0.2em] text-muted mb-2.5">
@@ -20,7 +20,7 @@ function TotalCard({ label, value, sub, large }: TotalCardProps) {
       >
         {value || '—'}
       </div>
-      {sub && <div className="font-mono text-[9px] text-muted mt-1">{sub}</div>}
+      {subtitle && <div className="font-mono text-[9px] text-muted mt-1">{subtitle}</div>}
     </div>
   )
 }
@@ -35,7 +35,7 @@ export function TotalsBar({ groups, getEntity, lastRefresh }: TotalsBarProps) {
   const groupTotals = groups.map((group) =>
     group.entities.reduce((sum, entity) => {
       const state = getEntity(entity, group.id)
-      return sum + state.rows.reduce((rowSum, row) => rowSum + (row.usd || 0), 0)
+      return sum + state.rows.reduce((rowSum, row) => rowSum + (row.usdValue || 0), 0)
     }, 0),
   )
   const grandTotal = groupTotals.reduce((sum, groupTotal) => sum + groupTotal, 0)
@@ -45,20 +45,20 @@ export function TotalsBar({ groups, getEntity, lastRefresh }: TotalsBarProps) {
       <TotalCard
         label="Portfolio Total"
         value={grandTotal ? formatUSD(grandTotal) : '—'}
-        sub="USD estimado"
+        subtitle="USD estimado"
       />
       {groups.map((group, index) => (
         <TotalCard
           key={group.id}
           label={group.label}
           value={groupTotals[index] ? formatUSD(groupTotals[index]) : '—'}
-          sub={`${group.entities.length} entidades`}
+          subtitle={`${group.entities.length} entidades`}
         />
       ))}
       <TotalCard
         label="Actualización"
         value={lastRefresh ? formatTime(lastRefresh) : '—'}
-        sub={lastRefresh ? formatDate(lastRefresh) : 'Sin datos'}
+        subtitle={lastRefresh ? formatDate(lastRefresh) : 'Sin datos'}
         large
       />
     </div>

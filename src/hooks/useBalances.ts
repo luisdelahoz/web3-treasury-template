@@ -20,12 +20,13 @@ interface ExplorerResponse {
 }
 
 async function fetchNative(address: string, network: NetworkKey): Promise<number> {
-  const net = NETWORKS[network]
-  const key = API_KEYS[network]
-  const url = `${net.explorer}?module=account&action=balance&address=${address}&tag=latest${key ? '&apikey=' + key : ''}`
-  const d = (await (await fetch(url)).json()) as ExplorerResponse
-  if (d.status !== '1') throw new Error(d.message || d.result || 'API error')
-  return parseFloat(d.result) / 1e18
+  const networkConfig = NETWORKS[network]
+  const apiKey = API_KEYS[network]
+  const apiUrl = `${networkConfig.explorer}?module=account&action=balance&address=${address}&tag=latest${apiKey ? '&apikey=' + apiKey : ''}`
+  const apiResponse = (await (await fetch(apiUrl)).json()) as ExplorerResponse
+  if (apiResponse.status !== '1')
+    throw new Error(apiResponse.message || apiResponse.result || 'API error')
+  return parseFloat(apiResponse.result) / 1e18
 }
 
 async function fetchERC20(
@@ -34,12 +35,13 @@ async function fetchERC20(
   decimals: number,
   network: NetworkKey,
 ): Promise<number> {
-  const net = NETWORKS[network]
-  const key = API_KEYS[network]
-  const url = `${net.explorer}?module=account&action=tokenbalance&contractaddress=${token}&address=${wallet}&tag=latest${key ? '&apikey=' + key : ''}`
-  const d = (await (await fetch(url)).json()) as ExplorerResponse
-  if (d.status !== '1') throw new Error(d.message || d.result || 'API error')
-  return parseFloat(d.result) / Math.pow(10, decimals)
+  const networkConfig = NETWORKS[network]
+  const apiKey = API_KEYS[network]
+  const apiUrl = `${networkConfig.explorer}?module=account&action=tokenbalance&contractaddress=${token}&address=${wallet}&tag=latest${apiKey ? '&apikey=' + apiKey : ''}`
+  const apiResponse = (await (await fetch(apiUrl)).json()) as ExplorerResponse
+  if (apiResponse.status !== '1')
+    throw new Error(apiResponse.message || apiResponse.result || 'API error')
+  return parseFloat(apiResponse.result) / Math.pow(10, decimals)
 }
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
@@ -53,38 +55,38 @@ interface UseBalancesResult {
 export function useBalances(groups: Group[], prices: PricesMap): UseBalancesResult {
   const [balances, setBalances] = useState<BalancesMap>({})
 
-  const entityKey = (entity: Entity, groupId: string) =>
+  const buildCacheKey = (entity: Entity, groupId: string) =>
     `${groupId}-${entity.address.toLowerCase()}-${entity.network}`
 
-  const setEntity = (key: string, patch: Partial<EntityState>) =>
+  const setEntityState = (cacheKey: string, patch: Partial<EntityState>) =>
     setBalances((prev) => ({
       ...prev,
-      [key]: { ...prev[key], ...patch } as EntityState,
+      [cacheKey]: { ...prev[cacheKey], ...patch } as EntityState,
     }))
 
   const loadEntity = useCallback(
     async (entity: Entity, groupId: string) => {
-      const key = entityKey(entity, groupId)
-      const net = NETWORKS[entity.network]
-      if (!net) return
+      const cacheKey = buildCacheKey(entity, groupId)
+      const networkConfig = NETWORKS[entity.network]
+      if (!networkConfig) return
 
-      setEntity(key, { status: 'loading', rows: [], error: null })
+      setEntityState(cacheKey, { status: 'loading', rows: [], error: null })
 
       try {
         const rows: AssetRow[] = await Promise.all(
           entity.assets.map(async (asset) => {
             if (asset.type === 'native') {
-              const bal = await fetchNative(entity.address, entity.network)
-              const usd = bal * (prices[net.geckoId] || 0)
+              const balance = await fetchNative(entity.address, entity.network)
+              const usdValue = balance * (prices[networkConfig.geckoId] || 0)
               return {
-                symbol: net.nativeSym,
-                name: net.label,
-                bal,
-                usd,
-                alertLevel: getAlertLevel(bal, asset.thresholds),
+                symbol: networkConfig.nativeSymbol,
+                name: networkConfig.label,
+                balance,
+                usdValue,
+                alertLevel: getAlertLevel(balance, asset.thresholds),
               }
             } else {
-              const bal = await fetchERC20(
+              const balance = await fetchERC20(
                 entity.address,
                 asset.address!,
                 asset.decimals,
@@ -93,19 +95,19 @@ export function useBalances(groups: Group[], prices: PricesMap): UseBalancesResu
               return {
                 symbol: asset.symbol,
                 name: (asset.address ?? '').slice(0, 10) + '…',
-                bal,
-                usd: 0,
-                alertLevel: getAlertLevel(bal, asset.thresholds),
+                balance,
+                usdValue: 0,
+                alertLevel: getAlertLevel(balance, asset.thresholds),
               }
             }
           }),
         )
-        setEntity(key, { status: 'ok', rows, error: null, updatedAt: new Date() })
-      } catch (err) {
-        setEntity(key, {
+        setEntityState(cacheKey, { status: 'ok', rows, error: null, updatedAt: new Date() })
+      } catch (error) {
+        setEntityState(cacheKey, {
           status: 'error',
           rows: [],
-          error: err instanceof Error ? err.message : String(err),
+          error: error instanceof Error ? error.message : String(error),
           updatedAt: new Date(),
         })
       }
@@ -118,7 +120,7 @@ export function useBalances(groups: Group[], prices: PricesMap): UseBalancesResu
   }, [groups, loadEntity])
 
   const getEntity = (entity: Entity, groupId: string): EntityState =>
-    balances[entityKey(entity, groupId)] ?? { status: 'idle', rows: [], error: null }
+    balances[buildCacheKey(entity, groupId)] ?? { status: 'idle', rows: [], error: null }
 
   return { loadAll, loadEntity, getEntity }
 }

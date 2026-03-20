@@ -26,7 +26,7 @@ interface NetworkColors {
   pill: string
 }
 
-const NET_COLORS: Record<NetworkCls, NetworkColors> = {
+const NETWORK_COLORS: Record<NetworkCls, NetworkColors> = {
   eth: {
     avatar: 'bg-eth/10 border border-eth/25 text-eth',
     pill: 'bg-eth/10  text-eth  border border-eth/20',
@@ -46,12 +46,12 @@ interface CardProps {
 }
 
 export function Card({ entity, state, style }: CardProps) {
-  const network = NETWORKS[entity.network] ?? NETWORKS.ethereum
+  const networkConfig = NETWORKS[entity.network] ?? NETWORKS.ethereum
   const status = state.status
   const rows = state.rows
-  const totalUSD = rows.reduce((sum, row) => sum + (row.usd || 0), 0)
+  const totalUSD = rows.reduce((sum, row) => sum + (row.usdValue || 0), 0)
   const cardAlert = getCardAlertLevel(rows)
-  const netColors = NET_COLORS[network.cls]
+  const networkColors = NETWORK_COLORS[networkConfig.colorVariant]
 
   return (
     <div
@@ -66,10 +66,10 @@ export function Card({ entity, state, style }: CardProps) {
           <div
             className={cn(
               'w-[34px] h-[34px] rounded-lg flex items-center justify-center text-sm shrink-0',
-              netColors.avatar,
+              networkColors.avatar,
             )}
           >
-            {network.icon}
+            {networkConfig.icon}
           </div>
           <div>
             <div className="text-sm font-bold text-text leading-tight">{entity.name}</div>
@@ -80,10 +80,10 @@ export function Card({ entity, state, style }: CardProps) {
               <span
                 className={cn(
                   'font-mono text-[7px] font-bold tracking-wide px-1 py-px rounded uppercase',
-                  netColors.pill,
+                  networkColors.pill,
                 )}
               >
-                {network.label}
+                {networkConfig.label}
               </span>
             </div>
           </div>

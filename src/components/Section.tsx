@@ -10,7 +10,7 @@ interface SectionProps {
 export function Section({ group, getEntity }: SectionProps) {
   const groupTotal = group.entities.reduce((sum, entity) => {
     const state = getEntity(entity, group.id)
-    return sum + state.rows.reduce((rowSum, row) => rowSum + (row.usd || 0), 0)
+    return sum + state.rows.reduce((rowSum, row) => rowSum + (row.usdValue || 0), 0)
   }, 0)
 
   return (
