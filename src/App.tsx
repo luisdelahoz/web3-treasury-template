@@ -9,37 +9,39 @@ import { useBalances } from './hooks/useBalances'
 import { useConfig } from './hooks/useConfig'
 import { onAuthChange, signOut, supabase } from './lib/supabase'
 import { cn } from './lib/cn'
+import type { User } from '@supabase/supabase-js'
 import staticConfig from '../config.json'
 import './index.css'
 
-const { project, refresh_interval_seconds = 60 } = staticConfig
+const { project, refresh_interval_seconds: refreshIntervalSeconds = 60 } = staticConfig
 
-// Apply accent color
-const accent = project.accent || '#00e5a0'
-document.documentElement.style.setProperty('--accent', accent)
+// Apply accent color from config
+const accentColor = project.accent || '#00e5a0'
+document.documentElement.style.setProperty('--accent', accentColor)
 document.title = project.name
 
 export default function App() {
-  const [user,         setUser]         = useState(undefined) // undefined = checking
-  const [lastRefresh,  setLastRefresh]  = useState(null)
+  const [user,         setUser]         = useState<User | null | undefined>(undefined) // undefined = checking auth
+  const [lastRefresh,  setLastRefresh]  = useState<Date | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const timerRef = useRef(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // ── Auth ──────────────────────────────────────────────────────
+  // ── Auth ──────────────────────────────────────────────────────────────────
+
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null)
     })
-    // Subscribe to changes
     const { data: { subscription } } = onAuthChange(setUser)
     return () => subscription.unsubscribe()
   }, [])
 
-  // ── Config from Supabase ──────────────────────────────────────
+  // ── Config from Supabase ──────────────────────────────────────────────────
+
   const { groups, loading: configLoading, error: configError, reload: reloadConfig } = useConfig()
 
-  // ── Balances ──────────────────────────────────────────────────
+  // ── Balances ──────────────────────────────────────────────────────────────
+
   const { prices, refetch: refetchPrices } = usePrices()
   const { loadAll, getEntity } = useBalances(groups, prices)
 
@@ -51,20 +53,22 @@ export default function App() {
     setIsRefreshing(false)
   }, [loadAll, refetchPrices])
 
-  // Refresh balances when config finishes loading
+  // Refresh balances once config finishes loading
   useEffect(() => {
     if (!configLoading && groups.length > 0) refresh()
-  }, [configLoading]) // eslint-disable-line
+  }, [configLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-refresh balances
+  // Auto-refresh on interval
   useEffect(() => {
-    timerRef.current = setInterval(refresh, refresh_interval_seconds * 1000)
-    return () => clearInterval(timerRef.current)
-  }, [refresh, refresh_interval_seconds])
+    timerRef.current = setInterval(refresh, refreshIntervalSeconds * 1000)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [refresh, refreshIntervalSeconds])
 
-  // ── Auth gate ─────────────────────────────────────────────────
+  // ── Auth gate ─────────────────────────────────────────────────────────────
+
   if (user === undefined) {
-    // Still checking session — show minimal spinner
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <Loader2 size={20} className="text-muted animate-spin" />
@@ -74,7 +78,8 @@ export default function App() {
 
   if (user === null) return <Login />
 
-  // ── Config error ──────────────────────────────────────────────
+  // ── Config error ──────────────────────────────────────────────────────────
+
   if (configError) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center p-8">
@@ -92,7 +97,8 @@ export default function App() {
     )
   }
 
-  // ── Dashboard ─────────────────────────────────────────────────
+  // ── Dashboard ─────────────────────────────────────────────────────────────
+
   return (
     <TooltipProvider>
       <div className="relative z-10">
@@ -118,7 +124,6 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* User email */}
             <span className="font-mono text-[9px] text-muted hidden sm:block">
               {user.email}
             </span>

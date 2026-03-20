@@ -1,8 +1,15 @@
 import { AlertTriangle, AlertOctagon } from 'lucide-react'
 import { cn } from '../../lib/cn'
 import { Tooltip } from './Tooltip'
+import type { AlertLevel, AssetRow } from '../../types'
 
-const LEVEL_CONFIG = {
+interface LevelConfig {
+  Icon:      React.ComponentType<{ size?: number; strokeWidth?: number }>
+  label:     string
+  className: string
+}
+
+const LEVEL_CONFIG: Record<Exclude<AlertLevel, 'ok'>, LevelConfig> = {
   warn: {
     Icon:      AlertTriangle,
     label:     'Warning',
@@ -15,21 +22,22 @@ const LEVEL_CONFIG = {
   },
 }
 
+interface AlertBadgeProps {
+  level: AlertLevel
+  rows:  AssetRow[]
+}
+
 /**
  * Small badge shown in the card header when one or more assets
  * are below their threshold. Wraps in a Tooltip listing which assets.
- *
- * Props:
- *   level   — 'warn' | 'critical'
- *   rows    — asset rows array (to build tooltip content)
  */
-export function AlertBadge({ level, rows }) {
-  if (level === 'ok' || !level) return null
+export function AlertBadge({ level, rows }: AlertBadgeProps) {
+  if (level === 'ok') return null
 
-  const cfg = LEVEL_CONFIG[level]
+  const config = LEVEL_CONFIG[level]
   const alertedAssets = rows
-    .filter(r => r.alertLevel === 'warn' || r.alertLevel === 'critical')
-    .map(r => `${r.symbol} (${r.bal?.toFixed ? r.bal.toFixed(4) : r.bal})`)
+    .filter(row => row.alertLevel === 'warn' || row.alertLevel === 'critical')
+    .map(row => `${row.symbol} (${row.bal.toFixed(4)})`)
     .join(', ')
 
   return (
@@ -40,11 +48,11 @@ export function AlertBadge({ level, rows }) {
           'px-1.5 py-0.5 rounded border',
           'font-mono text-[9px] font-bold uppercase tracking-wider',
           'cursor-default select-none',
-          cfg.className
+          config.className,
         )}
       >
-        <cfg.Icon size={9} strokeWidth={2.5} />
-        {cfg.label}
+        <config.Icon size={9} strokeWidth={2.5} />
+        {config.label}
       </span>
     </Tooltip>
   )

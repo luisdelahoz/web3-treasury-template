@@ -7,17 +7,17 @@ export function Login() {
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
   const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState(null)
+  const [error,    setError]    = useState<string | null>(null)
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     setLoading(true)
     setError(null)
     try {
       await signIn(email, password)
-      // onAuthChange in App.jsx will pick up the new session automatically
+      // onAuthChange in App.tsx will pick up the new session automatically
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }
@@ -61,7 +61,7 @@ export function Login() {
               <input
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={event => setEmail(event.target.value)}
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
@@ -81,7 +81,7 @@ export function Login() {
               <input
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={event => setPassword(event.target.value)}
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"

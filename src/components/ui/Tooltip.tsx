@@ -1,7 +1,17 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { cn } from '../../lib/cn'
 
-export function TooltipProvider({ children }) {
+interface TooltipProviderProps {
+  children: React.ReactNode
+}
+
+interface TooltipProps {
+  children: React.ReactNode
+  content:  React.ReactNode
+  side?:    'top' | 'right' | 'bottom' | 'left'
+}
+
+export function TooltipProvider({ children }: TooltipProviderProps) {
   return (
     <TooltipPrimitive.Provider delayDuration={200}>
       {children}
@@ -9,7 +19,7 @@ export function TooltipProvider({ children }) {
   )
 }
 
-export function Tooltip({ children, content, side = 'top' }) {
+export function Tooltip({ children, content, side = 'top' }: TooltipProps) {
   return (
     <TooltipPrimitive.Root>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>

@@ -1,10 +1,16 @@
 import { Card } from './Card'
-import { fmtUSD } from '../lib/formatters'
+import { formatUSD } from '../lib/formatters'
+import type { Group, EntityState } from '../types'
 
-export function Section({ group, getEntity }) {
-  const groupTotal = group.entities.reduce((acc, entity) => {
+interface SectionProps {
+  group:     Group
+  getEntity: (entity: Group['entities'][number], groupId: string) => EntityState
+}
+
+export function Section({ group, getEntity }: SectionProps) {
+  const groupTotal = group.entities.reduce((sum, entity) => {
     const state = getEntity(entity, group.id)
-    return acc + (state?.rows?.reduce((a, r) => a + (r.usd || 0), 0) || 0)
+    return sum + (state.rows.reduce((rowSum, row) => rowSum + (row.usd || 0), 0))
   }, 0)
 
   return (
@@ -19,7 +25,7 @@ export function Section({ group, getEntity }) {
         </span>
         <div className="flex-1 h-px bg-border" />
         <span className="font-mono text-[11px] font-bold text-[color:var(--accent)]">
-          {groupTotal ? fmtUSD(groupTotal) : '—'}
+          {groupTotal ? formatUSD(groupTotal) : '—'}
         </span>
       </div>
 
@@ -31,12 +37,12 @@ export function Section({ group, getEntity }) {
               Sin entidades en este grupo.
             </div>
           )
-          : group.entities.map((entity, i) => (
+          : group.entities.map((entity, index) => (
               <Card
                 key={`${entity.address}-${entity.network}`}
                 entity={entity}
                 state={getEntity(entity, group.id)}
-                style={{ animationDelay: `${i * 55}ms` }}
+                style={{ animationDelay: `${index * 55}ms` }}
               />
             ))
         }
