@@ -10,10 +10,10 @@ import { useConfig } from './hooks/useConfig'
 import { onAuthChange, signOut, supabase } from './lib/supabase'
 import { cn } from './lib/cn'
 import type { User } from '@supabase/supabase-js'
-import staticConfig from '../config.json'
+import config from '../config'
 import './index.css'
 
-const { project, refresh_interval_seconds: refreshIntervalSeconds = 60 } = staticConfig
+const { project, refreshIntervalSeconds } = config
 
 // Apply accent color from config
 const accentColor = project.accent || '#00e5a0'

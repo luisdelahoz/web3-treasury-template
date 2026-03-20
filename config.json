@@ -1,9 +1,0 @@
-{
-  "project": {
-    "name": "Treasury Monitor",
-    "tagline": "Monitoring · Ethereum & Polygon",
-    "accent": "#00e5a0"
-  },
-
-  "refresh_interval_seconds": 60
-}
